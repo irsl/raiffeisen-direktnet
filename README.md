@@ -9,7 +9,21 @@ docker run -e DIREKTNET_USERNAME=foo -e DIREKTNET_PASSWORD=sdf -e DIREKTNET_REPO
 NSACTIONS_SERVICE_URL=https://some.url/callback --rm -it raiffeisen
 ```
 
-Where `DIREKTNET_REPORT_TRANSACTIONS_SERVICE_URL` is a URL to a webhook which will receive the application/json payload of the transactions. The payload is a JSON array of hashes. An example:
+The log would contain something like this:
+
+```
+[Sun Sep 17 16:56:26 2017] Fetching main page
+[Sun Sep 17 16:56:27 2017] Got session details
+[Sun Sep 17 16:56:27 2017] Logging in...
+[Sun Sep 17 16:56:29 2017] Login was successful
+[Sun Sep 17 16:56:29 2017] Found account number: ***
+[Sun Sep 17 16:56:32 2017] Polling succeeded: 10/10
+[Sun Sep 17 16:56:32 2017] Reporting transactions to remote site: https://some.url/callback
+[Sun Sep 17 16:56:32 2017] Report succeeded, marking these transactions being succesful
+```
+
+
+The `DIREKTNET_REPORT_TRANSACTIONS_SERVICE_URL` variable is a URL to a webhook which will receive the application/json payload of the transactions. The payload is a JSON array of hashes. An example:
 
 ```
 [
