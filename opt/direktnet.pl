@@ -76,6 +76,8 @@ while(1){
 			lockedAccountDisabled=>'false',
 		});
 		
+		die "Fetching transactions failed" if(!$mech->success());
+		
 		my $transactions = DirektNet::parse($mech->content);
 		my $new_transactions = DirektNet::show_new_ones_only($transactions, $have_seen_cache);
 		DirektNet::remove_old_ones($have_seen_cache);
