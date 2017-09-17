@@ -5,7 +5,8 @@ Usage:
 
 ```
 docker build -t raiffeisen https://github.com/irsl/raiffeisen-direktnet/
-docker --rm raiffeisen
+docker run -e DIREKTNET_USERNAME=foo -e DIREKTNET_PASSWORD=sdf -e DIREKTNET_REPORT_TRA
+NSACTIONS_SERVICE_URL=https://some.url/callback --rm -it raiffeisen
 ```
 
 Where `DIREKTNET_REPORT_TRANSACTIONS_SERVICE_URL` is a URL to a webhook which will receive the application/json payload of the transactions. The payload is a JSON array of hashes. An example:
