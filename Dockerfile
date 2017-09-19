@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
 		libfile-slurp-perl \
 		libwww-mechanize-perl \
 		&& && rm -rf /var/lib/apt/lists/*
-USER 23101:23101
 ADD opt /opt
+
+USER 23101:23101
 ENTRYPOINT ["/usr/bin/perl", "/opt/direktnet.pl"]
