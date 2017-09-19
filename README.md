@@ -22,6 +22,7 @@ The log would contain something like this:
 [Sun Sep 17 16:56:32 2017] Report succeeded, marking these transactions being succesful
 ```
 
+If you want the script be persistent, cross-mount a volume for it as /tmp having a directory called `raiffeisen` writeable by uid `23101`.
 
 The `DIREKTNET_REPORT_TRANSACTIONS_SERVICE_URL` variable is a URL to a webhook which will receive the application/json payload of the transactions. The payload is a JSON array of hashes. An example:
 
