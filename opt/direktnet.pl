@@ -13,6 +13,7 @@ my $username = $ENV{DIREKTNET_USERNAME} or die "DIREKTNET_USERNAME missing";
 my $password = $ENV{DIREKTNET_PASSWORD} or die "DIREKTNET_PASSWORD missing";
 my $report_transactions_service_url = $ENV{DIREKTNET_REPORT_TRANSACTIONS_SERVICE_URL} or die ("Report service URL missing");
 my $main_url = $ENV{DIREKTNET_MAIN_URL} || "https://direktnet.raiffeisen.hu";
+my $state_file_path = $ENV{DIREKTNET_STATE_FILE_PATH} || "/tmp/raiffeisen/direktnet.json";
 
 my $poll_interval = $ENV{DIREKTNET_POLL_INTERVAL} || 60;
 
@@ -58,7 +59,7 @@ if(!$account_no){
 }
 
 
-my $have_seen_cache = {};
+my $have_seen_cache = DirektNet::read_state_file($state_file_path);
 
 while(1){
 
@@ -90,6 +91,7 @@ while(1){
 		if(($new_c) && (report($new_transactions))) {
 		   DirektNet::mylog("Report succeeded, marking these transactions being succesful");
 		   DirektNet::mark_as_seen($new_transactions, $have_seen_cache);
+		   DirektNet::write_state_file($state_file_path, $have_seen_cache);
 		}
 		
 		sleep($poll_interval);

@@ -5,8 +5,13 @@ use strict;
 use warnings;
 use HTML::Strip;
 use Encode qw( decode encode );
+use JSON::XS;
+use File::Slurp;
+use File::Basename;
 
 use constant A_MONTH_IN_SECONDS => 30* 60 *60;
+
+local $| = 1;
 
 sub parse {
   my $re = {};
@@ -129,6 +134,36 @@ sub strip_html {
   my $in = shift;
   my $hs = HTML::Strip->new();
   return $hs->parse($in);
+}
+
+sub read_state_file{
+  my $path = shift;
+  my $dir = dirname($path);
+  if(!-d $dir) {
+     mylog("State directory does not exist: $dir");
+	 return;
+  }
+  my $content = read_file($path, err_mode=>'carp');
+  return {} if(!$content);
+  return decode_json($content);
+}
+
+sub write_state_file{
+  my $path = shift;
+  my $object = shift;
+  
+  my $dir = dirname($path);
+  if(!-d $dir) {
+     if(!mkdir($dir)) {
+		 mylog("State directory ($dir) does not exist and we were not able to create it: $!");
+		 return;	 
+	 }
+  }
+  
+  my $content = encode_json($object);
+  if(!write_file($path, {err_mode=>'carp'}, $content)) {
+     mylog("Could not save state file to $path: $!");
+  }
 }
 
 1;
