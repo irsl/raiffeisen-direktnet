@@ -78,6 +78,7 @@ while(1){
 		});
 		
 		die "Fetching transactions failed" if(!$mech->success());
+		die "Unexpected response, portal has probably kicked us out" if($mech->title() ne "Raiffeisen DirektNet");
 		
 		my $transactions = DirektNet::parse($mech->content);
 		my $new_transactions = DirektNet::show_new_ones_only($transactions, $have_seen_cache);

@@ -5,8 +5,7 @@ Usage:
 
 ```
 docker build -t raiffeisen https://github.com/irsl/raiffeisen-direktnet/
-docker run -e DIREKTNET_USERNAME=foo -e DIREKTNET_PASSWORD=sdf -e DIREKTNET_REPORT_TRA
-NSACTIONS_SERVICE_URL=https://some.url/callback --rm -it raiffeisen
+docker run -e DIREKTNET_USERNAME=foo -e DIREKTNET_PASSWORD=sdf -e DIREKTNET_REPORT_TRANSACTIONS_SERVICE_URL=https://some.url/callback --restart unless-stopped raiffeisen
 ```
 
 The log would contain something like this:
