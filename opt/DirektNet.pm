@@ -9,7 +9,7 @@ use JSON::XS;
 use File::Slurp;
 use File::Basename;
 
-use constant A_MONTH_IN_SECONDS => 30* 60 *60;
+use constant A_MONTH_IN_SECONDS => 30 * 24 * 60 * 60;
 
 local $| = 1;
 
