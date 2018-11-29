@@ -23,7 +23,7 @@ my $mech = WWW::Mechanize->new();
 $mech->timeout(30);
 
 DirektNet::mylog("Fetching main page");
-$mech->get("$main_url/rai/direktnet/home.do");
+$mech->get("$main_url/cgi-bin/rai/direktnet/home.do");
 
 if($ENV{DIREKTNET_DEBUG}){
   $mech->add_handler("request_send",  sub { shift->dump; return });
@@ -63,7 +63,7 @@ my $have_seen_cache = DirektNet::read_state_file($state_file_path);
 
 while(1){
 
-		$mech->post("$main_url/rai/direktnet/accounts/selectAccountDispatcher.do?$bv_str", {
+		$mech->post("$main_url/cgi-bin/rai/direktnet/accounts/selectAccountDispatcher.do?$bv_str", {
 			BV_SessionID=>$bv_session_id,
 			BV_EngineID=>$bv_engine_id,
 			accountDispatcherForward=>'accounthistorywithnumber',
