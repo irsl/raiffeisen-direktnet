@@ -66,6 +66,9 @@ if(!$account_no){
 }
 
 
+my $last_balances = 0;
+parse_balance(0);
+
 my $have_seen_cache = DirektNet::read_state_file($state_file_path);
 
 while(1){
@@ -101,6 +104,10 @@ while(1){
 		   DirektNet::mark_as_seen($new_transactions, $have_seen_cache);
 		   DirektNet::write_state_file($state_file_path, $have_seen_cache);
 		}
+
+		if(time() - $last_balances >= 86400) {
+		    parse_balances(1);
+		}
 		
 		sleep($poll_interval);
 }
@@ -118,4 +125,28 @@ sub report {
 	#DirektNet::mylog("payload is: $payload");
     my $res = $ua->post( $report_transactions_service_url, "Content-Type" => "application/json", Content => $payload );
 	return $res->is_success;
+}
+
+sub parse_balance {
+  my $go_to_front = shift;
+  if($go_to_front) {
+     DirektNet::mylog("Going to the front page to find the balances");
+     $mech->follow_link( class => "headerLogo" );
+  }
+  my $balances = 0;
+  my $str = $mech->content;
+  my @balances;
+  while($str =~ m#<th>\s*<strong>\w{3} foly.+?</strong><br />\s*(\d{8}-\d{8}-\d{8})\s*</th>\s*<td class="rightText">\s*<strong>([0-9\s]+,\d\d)</strong>\s*(\w{3})\s*</td>#sg) { #
+     my $r = {
+        account => $1,
+        balance => $2,
+        currency => $3,
+     };
+     $r->{balance} =~ s#\s##g;
+     DirektNet::mylog("Balance: $r->{account} $r->{balance} $r->{currency}");
+     push @balances, $r;
+  }
+  DirektNet::mylog("Balances parsed: ".(scalar @balances));
+  report(\@balances);
+  $last_balances = time();
 }
