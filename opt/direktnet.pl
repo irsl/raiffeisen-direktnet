@@ -45,10 +45,17 @@ DirektNet::mylog("Logging in...");
 
 $mech->submit_form(
 	form_name => 'loginForm',
-	fields    => { username  => $username, password => $password },
+	fields    => { username => $username }
 );
 
-die "Login has probably failed" if($mech->content !~ "<title>Raiffeisen DirektNet");
+die "Login stage 1 has probably failed" if($mech->content !~ m#input type="password"#);
+
+$mech->submit_form(
+	form_name => 'loginForm',
+	fields    => { password => $password }
+);
+
+die "Login stage 2 has probably failed" if($mech->content !~ m#<title>Raiffeisen DirektNet#);
 
 DirektNet::mylog("Login was successful");
 
