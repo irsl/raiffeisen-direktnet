@@ -14,6 +14,7 @@ my $password = $ENV{DIREKTNET_PASSWORD} or die "DIREKTNET_PASSWORD missing";
 my $report_transactions_service_url = $ENV{DIREKTNET_REPORT_TRANSACTIONS_SERVICE_URL} or die ("Report service URL missing");
 my $main_url = $ENV{DIREKTNET_MAIN_URL} || "https://direktnet.raiffeisen.hu";
 my $state_file_path = $ENV{DIREKTNET_STATE_FILE_PATH} || "/tmp/raiffeisen/direktnet.json";
+my $balance_mtime_path = $ENV{DIREKTNET_BALANCE_FILE_PATH} || "/tmp/raiffeisen/direktnet.balance";
 
 my $poll_interval = $ENV{DIREKTNET_POLL_INTERVAL} || 60;
 
@@ -66,7 +67,7 @@ if(!$account_no){
 }
 
 
-my $last_balances = 0;
+my $last_balances = DirektNet::read_balance_mtime($balance_mtime_path);
 parse_balance(0);
 
 my $have_seen_cache = DirektNet::read_state_file($state_file_path);
@@ -105,9 +106,7 @@ while(1){
 		   DirektNet::write_state_file($state_file_path, $have_seen_cache);
 		}
 
-		if(time() - $last_balances >= 86400) {
-		    parse_balances(1);
-		}
+		parse_balance(1);
 		
 		sleep($poll_interval);
 }
@@ -128,6 +127,9 @@ sub report {
 }
 
 sub parse_balance {
+  my $now = time();
+  return  if($now - $last_balances < 86400);
+
   my $go_to_front = shift;
   if($go_to_front) {
      DirektNet::mylog("Going to the front page to find the balances");
@@ -148,5 +150,6 @@ sub parse_balance {
   }
   DirektNet::mylog("Balances parsed: ".(scalar @balances));
   report(\@balances);
-  $last_balances = time();
+  $last_balances = $now;
+  DirektNet::write_balance_mtime($balance_mtime_path, $last_balances);
 }

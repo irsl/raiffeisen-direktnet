@@ -136,6 +136,16 @@ sub strip_html {
   return $hs->parse($in);
 }
 
+sub read_balance_mtime {
+  my $path = shift;
+  return int(read_file($path, err_mode=>'carp') || "0");
+}
+sub write_balance_mtime {
+  my $path = shift;
+  my $mtime = shift;
+  return write_file($path, $mtime);
+}
+
 sub read_state_file{
   my $path = shift;
   my $dir = dirname($path);
